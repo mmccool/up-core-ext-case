@@ -183,6 +183,18 @@ module insert() {
           rcube(camera_x,camera_y,insert_wh+5+tol,camera_rr+insert_wr,case_sm,0);
         }
       }
+      // cable clearance
+      rotate([0,90,0])
+        hull() {
+          translate([-5,5,0]) 
+            cylinder(r=5,h=case_x,$fn=case_sm);
+          translate([-5,10,0]) 
+            cylinder(r=5,h=case_x,$fn=case_sm);
+          translate([0,5,0]) 
+            cylinder(r=5,h=case_x,$fn=case_sm);
+          translate([0,10,0]) 
+            cylinder(r=5,h=case_x,$fn=case_sm);
+        }
       // holes for case mounting bolts
       translate([-case_x/2+bolt_ox,-case_y/2+bolt_oy,-5])
         cylinder(r=case_sbr,h=sleeve_z+10,$fn=sleeve_sm);
@@ -256,13 +268,13 @@ module cutaway() {
     assembly();
     translate([0,0,-2])
       cube([200,200,200]);
-    //translate([-bolt_x/2-200,-200,-2])
-    //  cube([200,200,200]);
+    translate([-bolt_x/2-200,-200,-2])
+      cube([200,200,200]);
   }
 }
 
-assembly();
-//cutaway();
+//assembly();
+cutaway();
 
 // 3d printing
 //insert();
