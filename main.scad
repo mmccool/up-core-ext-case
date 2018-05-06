@@ -8,6 +8,8 @@ include <smooth_model.scad>
 include <bolt_params.scad>
 use <bolts.scad>
 
+sleeve_tol = 0.2;
+
 core_x = 65;
 core_y = 55;
 core_z = 2;
@@ -35,6 +37,28 @@ bolt_oy = 7.62;
 
 standoff_h = 5.5;
 standoff_r = (4/2)/cos(30);
+
+camera_x = 39;
+camera_y = 39;
+camera_cx = 16;
+camera_cy = 16;
+camera_ch = 10.5;
+camera_c2 = 1;
+camera_bx = 28;
+camera_by = 28;
+camera_rr = 2;
+camera_sx = 20;
+camera_sy = 20;
+camera_sr = 5/2;
+camera_h = 12.5;
+camera_r = 14/2;
+camera_tol = 0.2;
+camera_sm = 4*sm_base;
+
+sleeve_u = 3;
+sleeve_n = 6;
+sleeve_z = (sleeve_u+1)*sleeve_n;
+
 
 module rcube(x,y,z,r,sm) {
   hull() {
@@ -86,13 +110,67 @@ module core() {
       rcube(core_x-2*core_r,core_y-2*core_r,core_z,core_r,core_sm);
 }
 
+module insert() {
+  color([0.5,0,0,1])
+  translate([0,0,case_z+standoff_h-case_p]) {
+    difference() {
+      rcube(case_x-2*case_r,case_y-2*case_r,sleeve_z-sleeve_u-standoff_h+case_p,case_r-case_t-sleeve_tol,case_sm);
+      // cutout for camera
+      translate([0,0,sleeve_z-sleeve_u-camera_ch])
+        rcube(camera_cx,camera_cy,camera_ch+5,camera_cr,case_sm);
+      // cutout for "side bumps"
+      hull() {
+        translate([-camera_sx/2,0,sleeve_z-sleeve_u-camera_ch])
+          cylinder(r=camera_sr,h=camera_ch+5,$fn=camera_sm);
+        translate([ camera_sx/2,0,sleeve_z-sleeve_u-camera_ch])
+          cylinder(r=camera_sr,h=camera_ch+5,$fn=camera_sm);
+      }
+      hull() {
+        translate([0,-camera_sy/2,sleeve_z-sleeve_u-camera_ch])
+          cylinder(r=camera_sr,h=camera_ch+5,$fn=camera_sm);
+        translate([0, camera_sy/2,sleeve_z-sleeve_u-camera_ch])
+          cylinder(r=camera_sr,h=camera_ch+5,$fn=camera_sm);
+      }
+      // cutout for camera pcb
+      translate([0,0,-5])
+        rcube(camera_x,camera_y,sleeve_z-sleeve_u-camera_ch+5+tol,camera_rr,case_sm);
+    }
+  }
+}
+
+module sleeve() {
+  color([1,1,1,1])
+  difference() {
+    translate([0,0,case_z])
+      rcube(case_x-2*case_r,case_y-2*case_r,sleeve_z,case_r,case_sm);
+    // insert
+    translate([0,0,case_z-sleeve_u])
+      rcube(case_x-2*case_r,case_y-2*case_r,sleeve_z,case_r-case_t,case_sm);
+    // hole for camera lens
+    cylinder(r=camera_r + camera_tol,h=case_z+sleeve_z+5,$fn=camera_sm);
+  }
+}
+
 module assembly() {
-  case();
-  core();
-  standoffs();
+  //translate([0,0,-tol]) case();
+  //core();
+  translate([0,0,-2*tol]) standoffs();
+  //sleeve();
+  translate([0,0,-tol]) insert();
+}
+
+module cutaway() {
+  difference() {
+    assembly();
+    translate([0,0,-2])
+      cube([200,200,200]);
+    translate([-bolt_x/2-200,-200,-2])
+      cube([200,200,200]);
+  }
 }
 
 assembly();
+//cutaway();
 
 // 3d printing
 
