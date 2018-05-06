@@ -11,18 +11,22 @@ use <bolts.scad>
 case_x = 75.85;
 case_y = 72;
 case_z = 22.45;
-case_r = 5;
+case_h = 9.5;
+case_r = 7;
+case_lt = 1.3;
+case_lh = 1.25;
+case_t = 4.2;
 case_sm = 4*sm_base;
 
 module rcube(x,y,z,r,sm) {
   hull() {
-    translate([-x/2+r,-y/2+r,0])
+    translate([-x/2,-y/2,0])
       cylinder(r=r,h=z,$fn=sm);
-    translate([ x/2-r,-y/2+r,0])
+    translate([ x/2,-y/2,0])
       cylinder(r=r,h=z,$fn=sm);
-    translate([-x/2+r, y/2-r,0])
+    translate([-x/2, y/2,0])
       cylinder(r=r,h=z,$fn=sm);
-    translate([ x/2-r, y/2-r,0])
+    translate([ x/2, y/2,0])
       cylinder(r=r,h=z,$fn=sm);
   }
 }
@@ -30,7 +34,15 @@ module rcube(x,y,z,r,sm) {
 // model of base case (not for printing...)
 module case() {
   difference() {
-    rcube(case_x,case_y,case_z,case_r,case_sm);
+    rcube(case_x-2*case_r,case_y-2*case_r,case_z,case_r,case_sm);
+    translate([0,0,case_h])
+      rcube(case_x-2*case_r,case_y-2*case_r,case_z,case_r-case_t,case_sm);
+    difference() {
+      translate([0,0,case_z-case_lh])
+        rcube(case_x-2*case_r,case_y-2*case_r,case_z,case_r-case_lt,case_sm);
+      translate([0,0,case_z-case_lh])
+        rcube(case_x-2*case_r,case_y-2*case_r,case_z,case_r-case_t+case_lt,case_sm);
+    }
   }
 }
 
