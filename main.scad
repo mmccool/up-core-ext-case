@@ -50,15 +50,23 @@ module rcube(x,y,z,r,sm) {
 }
 
 module standoff(r=standoff_r,h=standoff_h) {
+  color([0.9,0.9,0.9,1])
   cylinder(r=r,h=h,$fn=6);
 }
 module standoffs() {
   translate([-case_x/2+bolt_ox,-case_y/2+bolt_oy,case_z-case_p])
     standoff();
+  translate([bolt_x-case_x/2+bolt_ox,-case_y/2+bolt_oy,case_z-case_p])
+    standoff();
+  translate([-case_x/2+bolt_ox,bolt_y-case_y/2+bolt_oy,case_z-case_p])
+    standoff();
+  translate([bolt_x-case_x/2+bolt_ox,bolt_y-case_y/2+bolt_oy,case_z-case_p])
+    standoff();
 }
 
 // model of base case (not for printing...)
 module case() {
+  color([0.5,0.5,0.5,1])
   difference() {
     rcube(case_x-2*case_r,case_y-2*case_r,case_z,case_r,case_sm);
     translate([0,0,case_h])
