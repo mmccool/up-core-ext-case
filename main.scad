@@ -84,6 +84,8 @@ ring_sm = 4*sm_base;
 
 insert_sh = 4;
 
+lock_h = 0.25;
+
 module ring(r=ring_r,R=ring_R,h=ring_h,sm=ring_sm,r_tol=0,h_tol=0) {
   difference() {
     cylinder(r=R+r_tol,h=h+h_tol,$fn=sm);
@@ -197,7 +199,12 @@ module insert() {
   color([0.5,0,0,1])
   translate([0,0,case_z+standoff_h-case_p]) {
     difference() {
-      rcube(case_x-2*case_r,case_y-2*case_r,sleeve_z-sleeve_u-standoff_h+case_p-insert_e,case_r-case_t-sleeve_tol,case_sm);
+      union() {
+        rcube(case_x-2*case_r,case_y-2*case_r,
+              sleeve_z-sleeve_u-standoff_h+case_p-insert_e,case_r-case_t-sleeve_tol,case_sm);
+        translate([0,0,case_p-standoff_h+sleeve_u+tol]) rcube(case_x-5*case_r,case_y-2*case_r+2*lock_h,
+              sleeve_u,case_r-case_t-sleeve_tol,case_sm);
+      }
       // cutout for ring
       translate([0,0,sleeve_z-sleeve_u-ring_h-standoff_h+case_p]) ring(r_tol=tol);
       // wiring holes for ring
@@ -560,16 +567,16 @@ module sleeve() {
 }
 
 module assembly() {
-  //translate([0,0,-tol]) case();
-  //core();
-  //translate([0,0,-2*tol]) standoffs();
+  translate([0,0,-tol]) case();
+  core();
+  translate([0,0,-2*tol]) standoffs();
   //sleeve();
   translate([0,0,-tol]) insert();
   translate([0,0,case_z+sleeve_z-sleeve_u-ring_h]) ring();
-  //translate([0,insert_y/2-stick_y,case_z+sleeve_z-sleeve_u-stick_z-tol]) stick();
-  //translate([0,-insert_y/2,case_z+sleeve_z-sleeve_u-stick_z-tol]) stick();
-  //translate([insert_x/2,0,case_z+sleeve_z-sleeve_u-stick_z-tol]) rotate(90) stick();
-  //translate([-insert_x/2+stick_y,0,case_z+sleeve_z-sleeve_u-stick_z-tol]) rotate(90) stick();
+  translate([0,insert_y/2-stick_y,case_z+sleeve_z-sleeve_u-stick_z-tol]) stick();
+  translate([0,-insert_y/2,case_z+sleeve_z-sleeve_u-stick_z-tol]) stick();
+  translate([insert_x/2,0,case_z+sleeve_z-sleeve_u-stick_z-tol]) rotate(90) stick();
+  translate([-insert_x/2+stick_y,0,case_z+sleeve_z-sleeve_u-stick_z-tol]) rotate(90) stick();
 }
 
 module cutaway() {
