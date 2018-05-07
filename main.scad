@@ -454,7 +454,7 @@ module insert() {
       translate([0,0,-5]) {
         hull() {
           rcube(camera_x,camera_y,sleeve_z-sleeve_u-camera_ch+5+tol,camera_rr,case_sm,0);
-          rcube(camera_x,camera_y,insert_wh+5+tol,camera_rr+insert_wr,case_sm,0);
+          translate([0,0,0]) rcube(camera_x+3,camera_y+10,insert_wh+8+tol,camera_rr+insert_wr,case_sm,0);
         }
       }
       // cable clearances
@@ -522,6 +522,25 @@ module insert() {
           cylinder(r=case_shr,h=sleeve_z+10,$fn=sleeve_sm);
         translate([10+bolt_x-case_x/2+bolt_ox,bolt_y-case_y/2+bolt_oy,case_st+case_sth])
           cylinder(r=case_shr,h=sleeve_z+10,$fn=sleeve_sm);
+      }
+      // MCU clearance
+      hull() {
+        translate([-case_x/2+bolt_ox,case_y/2-bolt_oy,-5])
+          cylinder(r=case_sbr,h=10,$fn=sleeve_sm);
+        translate([-case_x/2+bolt_ox,case_y/2-bolt_oy,-5+10])
+          sphere(r=case_sbr,$fn=sleeve_sm);
+        translate([bolt_x-case_x/2+bolt_ox,case_y/2-bolt_oy,-5])
+          cylinder(r=case_sbr,h=10,$fn=sleeve_sm);
+        translate([bolt_x-case_x/2+bolt_ox,case_y/2-bolt_oy,-5+10])
+          sphere(r=case_sbr,$fn=sleeve_sm);
+        translate([-case_x/2+bolt_ox,case_y/2-bolt_oy-4,-5])
+          cylinder(r=case_sbr,h=10,$fn=sleeve_sm);
+        translate([-case_x/2+bolt_ox,case_y/2-bolt_oy-4,-5+12])
+          sphere(r=case_sbr,$fn=sleeve_sm);
+        translate([bolt_x-case_x/2+bolt_ox,case_y/2-bolt_oy-4,-5])
+          cylinder(r=case_sbr,h=10,$fn=sleeve_sm);
+        translate([bolt_x-case_x/2+bolt_ox,case_y/2-bolt_oy-4,-5+12])
+          sphere(r=case_sbr,$fn=sleeve_sm);
       }
     }
   }
