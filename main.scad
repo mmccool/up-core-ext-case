@@ -165,6 +165,7 @@ module insert() {
         cylinder(r=camera_br,h=camera_ch+5,$fn=camera_sm);
       translate([ camera_bx/2, camera_by/2,sleeve_z-sleeve_u-camera_ch])
         cylinder(r=camera_br,h=camera_ch+5,$fn=camera_sm);
+      // recesses for camera pcb backside clearances (any rotation)
       // cutout for camera mounting nuts
       translate([0,0,5]) {
         translate([-camera_bx/2,-camera_by/2,sleeve_z-sleeve_u-camera_ch])
@@ -183,17 +184,28 @@ module insert() {
           rcube(camera_x,camera_y,insert_wh+5+tol,camera_rr+insert_wr,case_sm,0);
         }
       }
-      // cable clearance
+      // cable clearances
       rotate([0,90,0])
         hull() {
-          translate([-5,5,0]) 
-            cylinder(r=5,h=case_x,$fn=case_sm);
-          translate([-5,10,0]) 
-            cylinder(r=5,h=case_x,$fn=case_sm);
-          translate([0,5,0]) 
-            cylinder(r=5,h=case_x,$fn=case_sm);
-          translate([0,10,0]) 
-            cylinder(r=5,h=case_x,$fn=case_sm);
+          translate([-5,-10,-case_x]) 
+            cylinder(r=5,h=2*case_x,$fn=case_sm);
+          translate([-5,10,-case_x]) 
+            cylinder(r=5,h=2*case_x,$fn=case_sm);
+          translate([0,-10,-case_x]) 
+            cylinder(r=5,h=2*case_x,$fn=case_sm);
+          translate([0,10,-case_x]) 
+            cylinder(r=5,h=2*case_x,$fn=case_sm);
+        }
+      rotate(90) rotate([0,90,0])
+        hull() {
+          translate([-5,-10,-case_x]) 
+            cylinder(r=5,h=2*case_x,$fn=case_sm);
+          translate([-5,10,-case_x]) 
+            cylinder(r=5,h=2*case_x,$fn=case_sm);
+          translate([0,-10,-case_x]) 
+            cylinder(r=5,h=2*case_x,$fn=case_sm);
+          translate([0,10,-case_x]) 
+            cylinder(r=5,h=2*case_x,$fn=case_sm);
         }
       // holes for case mounting bolts
       translate([-case_x/2+bolt_ox,-case_y/2+bolt_oy,-5])
@@ -256,10 +268,10 @@ module sleeve() {
 }
 
 module assembly() {
-  translate([0,0,-tol]) case();
-  core();
+  //translate([0,0,-tol]) case();
+  //core();
   translate([0,0,-2*tol]) standoffs();
-  sleeve();
+  //sleeve();
   translate([0,0,-tol]) insert();
 }
 
@@ -273,8 +285,8 @@ module cutaway() {
   }
 }
 
-//assembly();
-cutaway();
+assembly();
+//cutaway();
 
 // 3d printing
 //insert();
