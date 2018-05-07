@@ -3,8 +3,8 @@
 // Copyright 2018 Michael McCpp;
 // License: CC BY 3.0. See LICENSE.md
 include <tols.scad>
-include <smooth_model.scad>
-//include <smooth_make.scad>
+//include <smooth_model.scad>
+include <smooth_make.scad>
 include <bolt_params.scad>
 use <bolts.scad>
 
@@ -38,8 +38,8 @@ bolt_oy = 7.62;
 standoff_h = 5.5;
 standoff_r = (4/2)/cos(30);
 
-camera_x = 39;
-camera_y = 39;
+camera_x = 42;
+camera_y = 42;
 camera_cx = 16;
 camera_cy = 16;
 camera_ch = 10.5;
@@ -82,7 +82,7 @@ ring_R = 44.5/2 + tol;
 ring_h = 3.25 + tol;
 ring_sm = 4*sm_base;
 
-insert_sh = 4;
+insert_sh = 5.25;
 
 lock_h = 0.25;
 
@@ -101,7 +101,7 @@ stick_s = 25.3; // hole separation
 stick_r = 2.7/2; // hole radius in stick
 stick_br = 2/2; // bolt radius (for mounting hole, self-threading)
 stick_e = 2; // hole inset
-stick_d = 5;
+stick_d = 8;
 stick_wr = 5/2; // wiring relief radius
 stick_we = 3; // wiring inset
 stick_sm = 4*sm_base;
@@ -417,13 +417,13 @@ module insert() {
       translate([ camera_x/2-camera_ie, camera_y/2-camera_ie,sleeve_z-sleeve_u-camera_ch])
         cylinder(r=camera_ir,h=camera_ch+5,$fn=camera_sm);
       // camera insert mounting holes (nuts)
-      translate([-camera_x/2+camera_ie,-camera_y/2+camera_ie,sleeve_z-sleeve_u-camera_ch+insert_sh+2])
+      translate([-camera_x/2+camera_ie,-camera_y/2+camera_ie,sleeve_z-sleeve_u-camera_ch+insert_sh+1.5])
         cylinder(r=camera_inr,h=camera_ch+5,$fn=6);
-      translate([ camera_x/2-camera_ie,-camera_y/2+camera_ie,sleeve_z-sleeve_u-camera_ch+insert_sh+2])
+      translate([ camera_x/2-camera_ie,-camera_y/2+camera_ie,sleeve_z-sleeve_u-camera_ch+insert_sh+1.5])
         cylinder(r=camera_inr,h=camera_ch+5,$fn=6);
-      translate([-camera_x/2+camera_ie, camera_y/2-camera_ie,sleeve_z-sleeve_u-camera_ch+insert_sh+2])
+      translate([-camera_x/2+camera_ie, camera_y/2-camera_ie,sleeve_z-sleeve_u-camera_ch+insert_sh+1.5])
         cylinder(r=camera_inr,h=camera_ch+5,$fn=6);
-      translate([ camera_x/2-camera_ie, camera_y/2-camera_ie,sleeve_z-sleeve_u-camera_ch+insert_sh+2])
+      translate([ camera_x/2-camera_ie, camera_y/2-camera_ie,sleeve_z-sleeve_u-camera_ch+insert_sh+1.5])
         cylinder(r=camera_inr,h=camera_ch+5,$fn=6);
       // recesses for camera pcb backside clearances (any rotation)
       hull() {
@@ -452,20 +452,20 @@ module insert() {
       }
       // cutout for camera mounting nuts
       translate([0,0,5]) {
-        translate([-camera_bx/2,-camera_by/2,sleeve_z-sleeve_u-camera_ch-4])
+        translate([-camera_bx/2,-camera_by/2,sleeve_z-sleeve_u-camera_ch-3])
           rotate(15) cylinder(r=camera_nr,h=camera_ch+5,$fn=6);
-        translate([ camera_bx/2,-camera_by/2,sleeve_z-sleeve_u-camera_ch-4])
+        translate([ camera_bx/2,-camera_by/2,sleeve_z-sleeve_u-camera_ch-3])
           rotate(-15) cylinder(r=camera_nr,h=camera_ch+5,$fn=6);
-        translate([-camera_bx/2, camera_by/2,sleeve_z-sleeve_u-camera_ch-4])
+        translate([-camera_bx/2, camera_by/2,sleeve_z-sleeve_u-camera_ch-3])
           rotate(-15) cylinder(r=camera_nr,h=camera_ch+5,$fn=6);
-        translate([ camera_bx/2, camera_by/2,sleeve_z-sleeve_u-camera_ch-4])
+        translate([ camera_bx/2, camera_by/2,sleeve_z-sleeve_u-camera_ch-3])
           rotate(15) cylinder(r=camera_nr,h=camera_ch+5,$fn=6);
       }
       // cutout for camera pcb
       translate([0,0,-5]) {
         hull() {
           rcube(camera_x,camera_y,sleeve_z-sleeve_u-camera_ch+5+tol,camera_rr,case_sm,0);
-          translate([0,0,0]) rcube(camera_x+3,camera_y+12,insert_wh+8+tol,camera_rr+insert_wr,case_sm,0);
+          translate([0,0,0]) rcube(camera_x,camera_y+9,insert_wh+8+tol,camera_rr+insert_wr,case_sm,0);
         }
       }
       // cable clearances
@@ -571,16 +571,16 @@ module sleeve() {
 }
 
 module assembly() {
-  translate([0,0,-tol]) case();
-  core();
-  translate([0,0,-2*tol]) standoffs();
+  //translate([0,0,-tol]) case();
+  //core();
+  //translate([0,0,-2*tol]) standoffs();
   //sleeve();
   translate([0,0,-tol]) insert();
-  translate([0,0,case_z+sleeve_z-sleeve_u-ring_h]) ring();
-  translate([0,insert_y/2-stick_y,case_z+sleeve_z-sleeve_u-stick_z-tol]) stick();
-  translate([0,-insert_y/2,case_z+sleeve_z-sleeve_u-stick_z-tol]) stick();
-  translate([insert_x/2,0,case_z+sleeve_z-sleeve_u-stick_z-tol]) rotate(90) stick();
-  translate([-insert_x/2+stick_y,0,case_z+sleeve_z-sleeve_u-stick_z-tol]) rotate(90) stick();
+  //translate([0,0,case_z+sleeve_z-sleeve_u-ring_h]) ring();
+  //translate([0,insert_y/2-stick_y,case_z+sleeve_z-sleeve_u-stick_z-tol]) stick();
+  //translate([0,-insert_y/2,case_z+sleeve_z-sleeve_u-stick_z-tol]) stick();
+  //translate([insert_x/2,0,case_z+sleeve_z-sleeve_u-stick_z-tol]) rotate(90) stick();
+  //translate([-insert_x/2+stick_y,0,case_z+sleeve_z-sleeve_u-stick_z-tol]) rotate(90) stick();
 }
 
 module cutaway() {
@@ -593,11 +593,33 @@ module cutaway() {
   }
 }
 
-assembly();
+module knife(t=0) {
+  translate([0,0,case_z+standoff_h-case_p-5+insert_sh]) {
+    rcube(camera_x,camera_y,sleeve_z-sleeve_u-camera_ch+5+tol,camera_rr+t,case_sm,0);
+    cylinder(r=(ring_r+ring_R)/2,h=sleeve_z);
+  }    
+}
+
+module frame() {
+  difference() {
+    insert();
+    knife(t=tol);
+  }
+}
+module mount() {
+  intersection() {
+    insert();
+    knife(t=-tol);
+  }
+}
+
+//assembly();
 //cutaway();
+//knife();
 
 // 3d printing
-//insert();
+frame();
+//mount();
 //sleeve();
 
 // laser cutting (export as DXF, then import to inkscape and convert to PDF)
