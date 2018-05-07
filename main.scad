@@ -579,13 +579,17 @@ module insert() {
 }
 
 module sleeve() {
-  color([1,1,1,1])
+  color([1,1,1,0.9])
   difference() {
     translate([0,0,case_z])
       rcube(case_x-2*case_r,case_y-2*case_r,sleeve_z,case_r,case_sm);
     // insert
     translate([0,0,case_z-sleeve_u])
       rcube(case_x-2*case_r,case_y-2*case_r,sleeve_z,case_r-case_t,case_sm,0);
+    // lock slot
+    translate([0,0,case_z+sleeve_u+tol]) 
+      rcube(case_x-6*case_r+2,case_y-2*case_r+2*lock_h,
+            sleeve_u+1,case_r-case_t-sleeve_tol,case_sm);
     // hole for camera lens
     cylinder(r=camera_r + camera_tol,h=case_z+sleeve_z+5,$fn=camera_sm);
   }
@@ -595,13 +599,13 @@ module assembly() {
   translate([0,0,-tol]) case();
   core();
   translate([0,0,-2*tol]) standoffs();
-  //sleeve();
   translate([0,0,-tol]) insert();
   translate([0,0,case_z+sleeve_z-sleeve_u-ring_h]) ring();
   translate([0,insert_y/2-stick_y,case_z+sleeve_z-sleeve_u-stick_z-tol]) stick();
   translate([0,-insert_y/2,case_z+sleeve_z-sleeve_u-stick_z-tol]) stick();
   translate([insert_x/2,0,case_z+sleeve_z-sleeve_u-stick_z-tol]) rotate(90) stick();
   translate([-insert_x/2+stick_y,0,case_z+sleeve_z-sleeve_u-stick_z-tol]) rotate(90) stick();
+  sleeve();
 }
 
 module cutaway() {
@@ -642,6 +646,12 @@ assembly();
 //frame();
 //mount();
 //sleeve();
+    // lock slot
+/*
+    translate([0,0,case_z+sleeve_u+tol]) 
+      rcube(case_x-6*case_r,case_y-2*case_r+2*lock_h,
+            sleeve_u,case_r-case_t-sleeve_tol,case_sm);
+*/
 
 // laser cutting (export as DXF, then import to inkscape and convert to PDF)
 //shelf_plate();
