@@ -71,16 +71,10 @@ case_shr = 4.4/2+0.2;
 case_st = 1;
 case_sth = 1.3;
 
-// 24 pixel ring
-//ring_r = 52.3/2 - tol;
-//ring_R = 65.6/2 + tol;
-//ring_h = 6.7 + tol;
-
-// 16 pixel ring
+// 16 neopixel ring
 ring_r = 31.7/2 - tol;
 ring_R = 44.5/2 + tol;
 ring_h = 6.7 + tol;
-
 ring_sm = 4*sm_base;
 
 module ring(r=ring_r,R=ring_R,h=ring_h,sm=ring_sm,r_tol=0,h_tol=0) {
@@ -88,6 +82,16 @@ module ring(r=ring_r,R=ring_R,h=ring_h,sm=ring_sm,r_tol=0,h_tol=0) {
     cylinder(r=R+r_tol,h=h+h_tol,$fn=sm);
     translate([0,0,-1]) cylinder(r=r-r_tol,h=h+h_tol+2,$fn=sm);
   }
+}
+
+// 8 neopixel stick
+stick_x = 51.10 + tol;
+stick_y = 3.19 + tol;
+stick_z = 10.22 + tol;
+
+module stick(x=stick_x,y=stick_y,z=stick_z,x_tol=0,y_tol=0,z_tol=0) {
+  translate([-x/2-x_tol,-y_tol,-z_tol]) 
+    cube([x+2*x_tol,y+2*y_tol,z+2*z_tol]);
 }
 
 module rcube(x,y,z,r,sm,tt=top_taper) {
@@ -154,6 +158,8 @@ module core() {
       rcube(core_x-2*core_r,core_y-2*core_r,core_z,core_r,core_sm);
 }
 
+insert_x = case_x-2*case_t-2*sleeve_tol;
+insert_y = case_y-2*case_t-2*sleeve_tol;
 module insert() {
   color([0.5,0,0,1])
   translate([0,0,case_z+standoff_h-case_p]) {
@@ -166,6 +172,35 @@ module insert() {
         rotate((i-0.5)*360/16) 
           translate([ring_R-2,0,sleeve_z-sleeve_u-ring_h-standoff_h+case_p-10]) 
             cylinder(r=1,h=20,$fn=4*sm_base);
+      }
+      // cutout for sticks
+      hull() {
+        translate([0,insert_y/2-stick_y,-standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol]) 
+          stick(x_tol=10,y_tol=tol,z_tol=tol);
+        translate([0,insert_y/2+tol,-standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol]) 
+          stick(x_tol=10,y_tol=tol,z_tol=stick_y);
+      }
+      hull() {
+        translate([0,-insert_y/2,-standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol]) 
+          stick(x_tol=10,y_tol=tol,z_tol=tol);
+        translate([0,-insert_y/2-stick_y-tol,-standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol]) 
+          stick(x_tol=10,y_tol=tol,z_tol=stick_y);
+      }
+      hull() {
+        translate([insert_x/2,0,-standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol]) 
+          rotate(90) 
+            stick(x_tol=10,y_tol=tol,z_tol=tol);
+        translate([insert_x/2+stick_y+tol,0,-standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol]) 
+          rotate(90) 
+            stick(x_tol=10,y_tol=tol,z_tol=stick_y);
+      }
+      hull() {
+        translate([-insert_x/2+stick_y,0,-standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol]) 
+          rotate(90) 
+            stick(x_tol=10,y_tol=tol,z_tol=tol);
+        translate([-insert_x/2-tol,0,-standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol]) 
+          rotate(90) 
+            stick(x_tol=10,y_tol=tol,z_tol=stick_y);
       }
       // cutout for camera
       translate([0,0,sleeve_z-sleeve_u-camera_ch])
@@ -332,11 +367,15 @@ module sleeve() {
 
 module assembly() {
   //translate([0,0,-tol]) case();
-  //core();
+  core();
   translate([0,0,-2*tol]) standoffs();
   //sleeve();
   translate([0,0,-tol]) insert();
-  //translate([0,0,case_z+sleeve_z-sleeve_u-ring_h]) ring();
+  translate([0,0,case_z+sleeve_z-sleeve_u-ring_h]) ring();
+  translate([0,insert_y/2-stick_y,case_z+sleeve_z-sleeve_u-stick_z-tol]) stick();
+  translate([0,-insert_y/2,case_z+sleeve_z-sleeve_u-stick_z-tol]) stick();
+  translate([insert_x/2,0,case_z+sleeve_z-sleeve_u-stick_z-tol]) rotate(90) stick();
+  translate([-insert_x/2+stick_y,0,case_z+sleeve_z-sleeve_u-stick_z-tol]) rotate(90) stick();
 }
 
 module cutaway() {
