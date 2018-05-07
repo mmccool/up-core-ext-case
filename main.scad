@@ -54,6 +54,9 @@ camera_sy = 20;
 camera_sr = 5/2;
 camera_h = 12.5;
 camera_r = 14/2;
+camera_ie = 1;
+camera_ir = m2_hole_radius;
+camera_inr = m2_nut_radius + 0.2;
 camera_tol = 0.2;
 camera_sm = 4*sm_base;
 
@@ -390,6 +393,15 @@ module insert() {
         cylinder(r=camera_br,h=camera_ch+5,$fn=camera_sm);
       translate([ camera_bx/2, camera_by/2,sleeve_z-sleeve_u-camera_ch])
         cylinder(r=camera_br,h=camera_ch+5,$fn=camera_sm);
+      // camera insert mounting holes
+      translate([-camera_x/2+camera_ie,-camera_y/2+camera_ie,sleeve_z-sleeve_u-camera_ch])
+        cylinder(r=camera_ir,h=camera_ch+5,$fn=camera_sm);
+      translate([ camera_x/2-camera_ie,-camera_y/2+camera_ie,sleeve_z-sleeve_u-camera_ch])
+        cylinder(r=camera_ir,h=camera_ch+5,$fn=camera_sm);
+      translate([-camera_x/2+camera_ie, camera_y/2-camera_ie,sleeve_z-sleeve_u-camera_ch])
+        cylinder(r=camera_ir,h=camera_ch+5,$fn=camera_sm);
+      translate([ camera_x/2-camera_ie, camera_y/2-camera_ie,sleeve_z-sleeve_u-camera_ch])
+        cylinder(r=camera_ir,h=camera_ch+5,$fn=camera_sm);
       // recesses for camera pcb backside clearances (any rotation)
       hull() {
         translate([-camera_bx/2+camera_nr+2*camera_br,-camera_by/2,sleeve_z-sleeve_u-camera_ch])
