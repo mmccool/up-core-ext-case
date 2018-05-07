@@ -74,7 +74,8 @@ case_sth = 1.3;
 // 16 neopixel ring
 ring_r = 31.7/2 - tol;
 ring_R = 44.5/2 + tol;
-ring_h = 6.7 + tol;
+//ring_h = 6.7 + tol;
+ring_h = 3.25 + tol;
 ring_sm = 4*sm_base;
 
 module ring(r=ring_r,R=ring_R,h=ring_h,sm=ring_sm,r_tol=0,h_tol=0) {
@@ -93,7 +94,7 @@ stick_r = 2.7/2; // hole radius in stick
 stick_br = 2/2; // bolt radius (for mounting hole, self-threading)
 stick_e = 2; // hole inset
 stick_d = 5;
-stick_w = 3; // wiring relief
+stick_wr = 5/2; // wiring relief radius
 stick_we = 3; // wiring inset
 stick_sm = 4*sm_base;
 stick_inverted = false;
@@ -229,45 +230,129 @@ module insert() {
             stick(x_tol=10,y_tol=tol,z_tol=stick_y);
       }
       // mounting holes for sticks, non-inverted
-      translate([-stick_s/2,insert_y/2-stick_y+1,-standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_e]) 
+      translate([-stick_s/2,insert_y/2-stick_y+1,
+                 -standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_e]) 
         rotate([90,0,0]) cylinder(r=stick_br,h=stick_d+1,$fn=stick_sm);
-      translate([ stick_s/2,insert_y/2-stick_y+1,-standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_e]) 
+      translate([ stick_s/2,insert_y/2-stick_y+1,
+                 -standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_e]) 
         rotate([90,0,0]) cylinder(r=stick_br,h=stick_d+1,$fn=stick_sm);
 
-      translate([-stick_s/2,-insert_y/2+stick_y-1,-standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_e]) 
+      translate([-stick_s/2,-insert_y/2+stick_y-1,
+                 -standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_e]) 
         rotate([-90,0,0]) cylinder(r=stick_br,h=stick_d+1,$fn=stick_sm);
-      translate([ stick_s/2,-insert_y/2+stick_y-1,-standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_e]) 
+      translate([ stick_s/2,-insert_y/2+stick_y-1,
+                 -standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_e]) 
         rotate([-90,0,0]) cylinder(r=stick_br,h=stick_d+1,$fn=stick_sm);
 
-      translate([insert_x/2-stick_y+1,-stick_s/2,-standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_e])
+      translate([insert_x/2-stick_y+1,-stick_s/2,
+                 -standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_e])
         rotate([0,-90,0]) cylinder(r=stick_br,h=stick_d+1,$fn=stick_sm);
-      translate([insert_x/2-stick_y+1, stick_s/2,-standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_e])
+      translate([insert_x/2-stick_y+1, stick_s/2,
+                 -standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_e])
         rotate([0,-90,0]) cylinder(r=stick_br,h=stick_d+1,$fn=stick_sm);
 
-      translate([-insert_x/2+stick_y-1,-stick_s/2,-standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_e]) 
+      translate([-insert_x/2+stick_y-1,-stick_s/2,
+                 -standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_e]) 
         rotate([0,90,0]) cylinder(r=stick_br,h=stick_d+1,$fn=stick_sm);
-      translate([-insert_x/2+stick_y-1, stick_s/2,-standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_e]) 
+      translate([-insert_x/2+stick_y-1, stick_s/2,
+                 -standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_e]) 
         rotate([0,90,0]) cylinder(r=stick_br,h=stick_d+1,$fn=stick_sm);
       // mounting holes for sticks, inverted
-      translate([-stick_s/2,insert_y/2-stick_y+1,-standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_z-stick_e]) 
+      translate([-stick_s/2,insert_y/2-stick_y+1,
+                 -standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_z-stick_e]) 
         rotate([90,0,0]) cylinder(r=stick_br,h=stick_d+1,$fn=stick_sm);
-      translate([ stick_s/2,insert_y/2-stick_y+1,-standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_z-stick_e]) 
+      translate([ stick_s/2,insert_y/2-stick_y+1,
+                 -standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_z-stick_e]) 
         rotate([90,0,0]) cylinder(r=stick_br,h=stick_d+1,$fn=stick_sm);
 
-      translate([-stick_s/2,-insert_y/2+stick_y-1,-standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_z-stick_e]) 
+      translate([-stick_s/2,-insert_y/2+stick_y-1,
+                 -standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_z-stick_e]) 
         rotate([-90,0,0]) cylinder(r=stick_br,h=stick_d+1,$fn=stick_sm);
-      translate([ stick_s/2,-insert_y/2+stick_y-1,-standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_z-stick_e]) 
+      translate([ stick_s/2,-insert_y/2+stick_y-1,
+                 -standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_z-stick_e]) 
         rotate([-90,0,0]) cylinder(r=stick_br,h=stick_d+1,$fn=stick_sm);
 
-      translate([insert_x/2-stick_y+1,-stick_s/2,-standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_z-stick_e])
+      translate([insert_x/2-stick_y+1,-stick_s/2,
+                 -standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_z-stick_e])
         rotate([0,-90,0]) cylinder(r=stick_br,h=stick_d+1,$fn=stick_sm);
-      translate([insert_x/2-stick_y+1, stick_s/2,-standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_z-stick_e])
+      translate([insert_x/2-stick_y+1, stick_s/2,
+                 -standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_z-stick_e])
         rotate([0,-90,0]) cylinder(r=stick_br,h=stick_d+1,$fn=stick_sm);
 
-      translate([-insert_x/2+stick_y-1,-stick_s/2,-standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_z-stick_e]) 
+      translate([-insert_x/2+stick_y-1,-stick_s/2,
+                 -standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_z-stick_e]) 
         rotate([0,90,0]) cylinder(r=stick_br,h=stick_d+1,$fn=stick_sm);
-      translate([-insert_x/2+stick_y-1, stick_s/2,-standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_z-stick_e]) 
+      translate([-insert_x/2+stick_y-1, stick_s/2,
+                 -standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol+stick_z-stick_e]) 
         rotate([0,90,0]) cylinder(r=stick_br,h=stick_d+1,$fn=stick_sm);
+      // wiring access holes for sticks
+      translate([-insert_x/2+stick_y, stick_x/2-stick_wr,
+                 -standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol]) {
+        cylinder(r=stick_wr,h=sleeve_z,$fn=stick_sm);
+        hull() {
+          sphere(r=stick_wr,$fn=stick_sm);
+          translate([5,0,-5]) sphere(r=stick_wr,$fn=stick_sm);
+        }
+      }
+      translate([-insert_x/2+stick_y,-stick_x/2+stick_wr,
+                 -standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol]) {
+        cylinder(r=stick_wr,h=sleeve_z,$fn=stick_sm);
+        hull() {
+          sphere(r=stick_wr,$fn=stick_sm);
+          translate([5,0,-5]) sphere(r=stick_wr,$fn=stick_sm);
+        }
+      }
+
+      translate([insert_x/2-stick_y, stick_x/2-stick_wr,
+                 -standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol]) {
+        cylinder(r=stick_wr,h=sleeve_z,$fn=stick_sm);
+        hull() {
+          sphere(r=stick_wr,$fn=stick_sm);
+          translate([-5,0,-5]) sphere(r=stick_wr,$fn=stick_sm);
+        }
+      }
+      translate([insert_x/2-stick_y,-stick_x/2+stick_wr,
+                 -standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol]) {
+        cylinder(r=stick_wr,h=sleeve_z,$fn=stick_sm);
+        hull() {
+          sphere(r=stick_wr,$fn=stick_sm);
+          translate([-5,0,-5]) sphere(r=stick_wr,$fn=stick_sm);
+        }
+      }
+
+      translate([ stick_x/2-stick_wr,-insert_y/2+stick_y,
+                 -standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol]) {
+        cylinder(r=stick_wr,h=sleeve_z,$fn=stick_sm);
+        hull() {
+          sphere(r=stick_wr,$fn=stick_sm);
+          translate([0,5,-5]) sphere(r=stick_wr,$fn=stick_sm);
+        }
+      }
+      translate([-stick_x/2+stick_wr,-insert_y/2+stick_y,
+                 -standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol]) {
+        cylinder(r=stick_wr,h=sleeve_z,$fn=stick_sm);
+        hull() {
+          sphere(r=stick_wr,$fn=stick_sm);
+          translate([0,5,-5]) sphere(r=stick_wr,$fn=stick_sm);
+        }
+      }
+
+      translate([ stick_x/2-stick_wr,insert_y/2-stick_y,
+                 -standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol]) {
+        cylinder(r=stick_wr,h=sleeve_z,$fn=stick_sm);
+        hull() {
+          sphere(r=stick_wr,$fn=stick_sm);
+          translate([0,-5,-5]) sphere(r=stick_wr,$fn=stick_sm);
+        }
+      }
+      translate([-stick_x/2+stick_wr,insert_y/2-stick_y,
+                 -standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol]) {
+        cylinder(r=stick_wr,h=sleeve_z,$fn=stick_sm);
+        hull() {
+          sphere(r=stick_wr,$fn=stick_sm);
+          translate([0,-5,-5]) sphere(r=stick_wr,$fn=stick_sm);
+        }
+      }
       // cutout for camera
       translate([0,0,sleeve_z-sleeve_u-camera_ch])
         rcube(camera_cx,camera_cy,camera_ch+5,camera_cr,case_sm);
@@ -437,7 +522,7 @@ module assembly() {
   //translate([0,0,-2*tol]) standoffs();
   //sleeve();
   translate([0,0,-tol]) insert();
-  //translate([0,0,case_z+sleeve_z-sleeve_u-ring_h]) ring();
+  translate([0,0,case_z+sleeve_z-sleeve_u-ring_h]) ring();
   //translate([0,insert_y/2-stick_y,case_z+sleeve_z-sleeve_u-stick_z-tol]) stick();
   //translate([0,-insert_y/2,case_z+sleeve_z-sleeve_u-stick_z-tol]) stick();
   //translate([insert_x/2,0,case_z+sleeve_z-sleeve_u-stick_z-tol]) rotate(90) stick();
