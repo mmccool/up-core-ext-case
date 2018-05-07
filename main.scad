@@ -3,8 +3,8 @@
 // Copyright 2018 Michael McCpp;
 // License: CC BY 3.0. See LICENSE.md
 include <tols.scad>
-//include <smooth_model.scad>
-include <smooth_make.scad>
+include <smooth_model.scad>
+//include <smooth_make.scad>
 include <bolt_params.scad>
 use <bolts.scad>
 
@@ -202,8 +202,12 @@ module insert() {
       union() {
         rcube(case_x-2*case_r,case_y-2*case_r,
               sleeve_z-sleeve_u-standoff_h+case_p-insert_e,case_r-case_t-sleeve_tol,case_sm);
-        translate([0,0,case_p-standoff_h+sleeve_u+tol]) rcube(case_x-5*case_r,case_y-2*case_r+2*lock_h,
-              sleeve_u,case_r-case_t-sleeve_tol,case_sm);
+        // sleeve lock tabs
+        translate([0,0,case_p-standoff_h+sleeve_u+tol]) 
+          rcube(case_x-6*case_r,case_y-2*case_r+2*lock_h,sleeve_u,case_r-case_t-sleeve_tol,case_sm);
+        translate([0,0,case_p-standoff_h+2*sleeve_u-1]) 
+          rotate([180,0,0])
+            rcube(case_x-6*case_r,case_y-2*case_r,2*sleeve_u,case_r-case_t-sleeve_tol,case_sm);
       }
       // cutout for ring
       translate([0,0,sleeve_z-sleeve_u-ring_h-standoff_h+case_p]) ring(r_tol=tol);
@@ -461,7 +465,7 @@ module insert() {
       translate([0,0,-5]) {
         hull() {
           rcube(camera_x,camera_y,sleeve_z-sleeve_u-camera_ch+5+tol,camera_rr,case_sm,0);
-          translate([0,0,0]) rcube(camera_x+3,camera_y+10,insert_wh+8+tol,camera_rr+insert_wr,case_sm,0);
+          translate([0,0,0]) rcube(camera_x+3,camera_y+12,insert_wh+8+tol,camera_rr+insert_wr,case_sm,0);
         }
       }
       // cable clearances
@@ -471,9 +475,9 @@ module insert() {
             cylinder(r=5,h=2*case_x,$fn=case_sm);
           translate([-4,10,-case_x]) 
             cylinder(r=5,h=2*case_x,$fn=case_sm);
-          translate([0,-10,-case_x]) 
+          translate([5,-10,-case_x]) 
             cylinder(r=5,h=2*case_x,$fn=case_sm);
-          translate([0,10,-case_x]) 
+          translate([5,10,-case_x]) 
             cylinder(r=5,h=2*case_x,$fn=case_sm);
         }
       rotate(90) rotate([0,90,0])
@@ -482,9 +486,9 @@ module insert() {
             cylinder(r=5,h=2*case_x,$fn=case_sm);
           translate([-4,10,-case_x]) 
             cylinder(r=5,h=2*case_x,$fn=case_sm);
-          translate([0,-10,-case_x]) 
+          translate([5,-10,-case_x]) 
             cylinder(r=5,h=2*case_x,$fn=case_sm);
-          translate([0,10,-case_x]) 
+          translate([5,10,-case_x]) 
             cylinder(r=5,h=2*case_x,$fn=case_sm);
         }
       // holes for case mounting bolts
@@ -532,13 +536,13 @@ module insert() {
       }
       // MCU clearance
       hull() {
-        translate([-case_x/2+bolt_ox,case_y/2-bolt_oy,-5])
-          cylinder(r=case_sbr,h=10,$fn=sleeve_sm);
-        translate([-case_x/2+bolt_ox,case_y/2-bolt_oy,-5+10])
+        translate([-case_x/2+bolt_ox,case_y/2-bolt_oy+0.75,-5])
+          cylinder(r=case_sbr,h=9,$fn=sleeve_sm);
+        translate([-case_x/2+bolt_ox,case_y/2-bolt_oy+0.75,-5+9])
           sphere(r=case_sbr,$fn=sleeve_sm);
-        translate([bolt_x-case_x/2+bolt_ox,case_y/2-bolt_oy,-5])
-          cylinder(r=case_sbr,h=10,$fn=sleeve_sm);
-        translate([bolt_x-case_x/2+bolt_ox,case_y/2-bolt_oy,-5+10])
+        translate([bolt_x-case_x/2+bolt_ox,case_y/2-bolt_oy+0.75,-5])
+          cylinder(r=case_sbr,h=9,$fn=sleeve_sm);
+        translate([bolt_x-case_x/2+bolt_ox,case_y/2-bolt_oy+0.75,-5+9])
           sphere(r=case_sbr,$fn=sleeve_sm);
         translate([-case_x/2+bolt_ox,case_y/2-bolt_oy-4,-5])
           cylinder(r=case_sbr,h=10,$fn=sleeve_sm);
