@@ -42,7 +42,7 @@ camera_x = 39;
 camera_y = 39;
 camera_cx = 16;
 camera_cy = 16;
-camera_ch = 10.5;
+camera_ch = 11;
 camera_cr = 1;
 camera_bx = 28;
 camera_by = 28;
@@ -62,7 +62,7 @@ sleeve_n = 6;
 sleeve_z = (sleeve_u+1)*sleeve_n;
 sleeve_sm = 4*sm_base;
 top_taper = 0.5;
-insert_e = 1;
+insert_e = tol;
 insert_wr = 3;
 insert_wh = 1;
 
@@ -70,6 +70,25 @@ case_sbr = m2_5_hole_radius + 0.1;
 case_shr = 4.4/2+0.2;
 case_st = 1;
 case_sth = 1.3;
+
+// 24 pixel ring
+//ring_r = 52.3/2 - tol;
+//ring_R = 65.6/2 + tol;
+//ring_h = 6.7 + tol;
+
+// 16 pixel ring
+ring_r = 31.7/2 - tol;
+ring_R = 44.5/2 + tol;
+ring_h = 6.7 + tol;
+
+ring_sm = 4*sm_base;
+
+module ring(r=ring_r,R=ring_R,h=ring_h,sm=ring_sm,r_tol=0,h_tol=0) {
+  difference() {
+    cylinder(r=R+r_tol,h=h+h_tol,$fn=sm);
+    translate([0,0,-1]) cylinder(r=r-r_tol,h=h+h_tol+2,$fn=sm);
+  }
+}
 
 module rcube(x,y,z,r,sm,tt=top_taper) {
   hull() {
@@ -140,6 +159,14 @@ module insert() {
   translate([0,0,case_z+standoff_h-case_p]) {
     difference() {
       rcube(case_x-2*case_r,case_y-2*case_r,sleeve_z-sleeve_u-standoff_h+case_p-insert_e,case_r-case_t-sleeve_tol,case_sm);
+      // cutout for ring
+      translate([0,0,sleeve_z-sleeve_u-ring_h-standoff_h+case_p]) ring(r_tol=tol);
+      // wiring holes for ring
+      for (i=[0:15]) {
+        rotate((i-0.5)*360/16) 
+          translate([ring_R-2,0,sleeve_z-sleeve_u-ring_h-standoff_h+case_p-10]) 
+            cylinder(r=1,h=20,$fn=4*sm_base);
+      }
       // cutout for camera
       translate([0,0,sleeve_z-sleeve_u-camera_ch])
         rcube(camera_cx,camera_cy,camera_ch+5,camera_cr,case_sm);
@@ -180,38 +207,38 @@ module insert() {
       // recesses for camera pcb backside clearances (any rotation)
       hull() {
         translate([-camera_bx/2+camera_nr+2*camera_br,-camera_by/2,sleeve_z-sleeve_u-camera_ch])
-          cylinder(r=2*camera_br,h=0.3*camera_ch,$fn=camera_sm);
+          cylinder(r=1.3*camera_br,h=0.3*camera_ch,$fn=camera_sm);
         translate([ camera_bx/2-camera_nr-2*camera_br,-camera_by/2,sleeve_z-sleeve_u-camera_ch])
-          cylinder(r=2*camera_br,h=0.3*camera_ch,$fn=camera_sm);
+          cylinder(r=1.3*camera_br,h=0.3*camera_ch,$fn=camera_sm);
       }
       hull() {
         translate([-camera_bx/2+camera_nr+2*camera_br, camera_by/2,sleeve_z-sleeve_u-camera_ch])
-          cylinder(r=2*camera_br,h=0.3*camera_ch,$fn=camera_sm);
+          cylinder(r=1.3*camera_br,h=0.3*camera_ch,$fn=camera_sm);
         translate([ camera_bx/2-camera_nr-2*camera_br, camera_by/2,sleeve_z-sleeve_u-camera_ch])
-          cylinder(r=2*camera_br,h=0.3*camera_ch,$fn=camera_sm);
+          cylinder(r=1.3*camera_br,h=0.3*camera_ch,$fn=camera_sm);
       }
       hull() {
         translate([-camera_bx/2,-camera_by/2+camera_nr+2*camera_br,sleeve_z-sleeve_u-camera_ch])
-          cylinder(r=2*camera_br,h=0.3*camera_ch,$fn=camera_sm);
+          cylinder(r=1.3*camera_br,h=0.3*camera_ch,$fn=camera_sm);
         translate([-camera_bx/2, camera_by/2-camera_nr-2*camera_br,sleeve_z-sleeve_u-camera_ch])
-          cylinder(r=2*camera_br,h=0.3*camera_ch,$fn=camera_sm);
+          cylinder(r=1.3*camera_br,h=0.3*camera_ch,$fn=camera_sm);
       }
       hull() {
         translate([ camera_bx/2,-camera_by/2+camera_nr+2*camera_br,sleeve_z-sleeve_u-camera_ch])
-          cylinder(r=2*camera_br,h=0.3*camera_ch,$fn=camera_sm);
+          cylinder(r=1.3*camera_br,h=0.3*camera_ch,$fn=camera_sm);
         translate([ camera_bx/2, camera_by/2-camera_nr-2*camera_br,sleeve_z-sleeve_u-camera_ch])
-          cylinder(r=2*camera_br,h=0.3*camera_ch,$fn=camera_sm);
+          cylinder(r=1.3*camera_br,h=0.3*camera_ch,$fn=camera_sm);
       }
       // cutout for camera mounting nuts
       translate([0,0,5]) {
-        translate([-camera_bx/2,-camera_by/2,sleeve_z-sleeve_u-camera_ch])
-          cylinder(r=camera_nr,h=camera_ch+5,$fn=6);
-        translate([ camera_bx/2,-camera_by/2,sleeve_z-sleeve_u-camera_ch])
-          cylinder(r=camera_nr,h=camera_ch+5,$fn=6);
-        translate([-camera_bx/2, camera_by/2,sleeve_z-sleeve_u-camera_ch])
-          cylinder(r=camera_nr,h=camera_ch+5,$fn=6);
-        translate([ camera_bx/2, camera_by/2,sleeve_z-sleeve_u-camera_ch])
-          cylinder(r=camera_nr,h=camera_ch+5,$fn=6);
+        translate([-camera_bx/2,-camera_by/2,sleeve_z-sleeve_u-camera_ch-4])
+          rotate(15) cylinder(r=camera_nr,h=camera_ch+5,$fn=6);
+        translate([ camera_bx/2,-camera_by/2,sleeve_z-sleeve_u-camera_ch-4])
+          rotate(-15) cylinder(r=camera_nr,h=camera_ch+5,$fn=6);
+        translate([-camera_bx/2, camera_by/2,sleeve_z-sleeve_u-camera_ch-4])
+          rotate(-15) cylinder(r=camera_nr,h=camera_ch+5,$fn=6);
+        translate([ camera_bx/2, camera_by/2,sleeve_z-sleeve_u-camera_ch-4])
+          rotate(15) cylinder(r=camera_nr,h=camera_ch+5,$fn=6);
       }
       // cutout for camera pcb
       translate([0,0,-5]) {
@@ -309,6 +336,7 @@ module assembly() {
   translate([0,0,-2*tol]) standoffs();
   //sleeve();
   translate([0,0,-tol]) insert();
+  //translate([0,0,case_z+sleeve_z-sleeve_u-ring_h]) ring();
 }
 
 module cutaway() {
