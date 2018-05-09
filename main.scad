@@ -85,6 +85,16 @@ insert_sh = 5.25;
 
 lock_h = 0.25;
 
+power_r = 8/2;
+power_R = 10/2;
+power_nr = 11.5/2;
+power_ox = 22;
+power_iy = 1;
+power_ix = case_x/2;
+power_w = 4;
+power_h = 2;
+power_sm = 4*sm_base;
+
 module ring(r=ring_r,R=ring_R,h=ring_h,sm=ring_sm,r_tol=0,h_tol=0) {
   difference() {
     cylinder(r=R+r_tol,h=h+h_tol,$fn=sm);
@@ -194,6 +204,7 @@ module core() {
 
 insert_x = case_x-2*case_t-2*sleeve_tol;
 insert_y = case_y-2*case_t-2*sleeve_tol;
+
 module insert() {
   color([0.5,0,0,1])
   translate([0,0,case_z+standoff_h-case_p]) {
@@ -205,12 +216,11 @@ module insert() {
         translate([0,0,case_p-standoff_h+sleeve_u+tol]) 
           rcube(case_x-6*case_r,case_y-2*case_r+2*lock_h,
                 sleeve_u,case_r-case_t-sleeve_tol,case_sm);
-          translate([0,0,case_p-standoff_h+2*sleeve_u-1]) 
-            rotate([180,0,0])
-              rcube(case_x-2*case_r+2*(case_r-case_t-sleeve_tol)-1-18,
-                    case_y-2*case_r+2*(case_r-case_t-sleeve_tol)-1,
-                    2*sleeve_u,0.5,case_sm);
-                    // 2*sleeve_u,case_r-case_t-sleeve_tol,case_sm);
+        translate([0,0,case_p-standoff_h+2*sleeve_u-1]) 
+          rotate([180,0,0])
+            rcube(case_x-2*case_r+2*(case_r-case_t-sleeve_tol)-1-18,
+                  case_y-2*case_r+2*(case_r-case_t-sleeve_tol)-1,
+                  2*sleeve_u,0.5,case_sm);
       }
       // cutout for ring
       translate([0,0,sleeve_z-sleeve_u-ring_h-standoff_h+case_p]) 
@@ -513,8 +523,8 @@ module insert() {
       translate([0,0,-5]) {
         hull() {
           rcube(camera_x,camera_y,sleeve_z-sleeve_u-camera_ch+5+tol,camera_rr,case_sm,0);
-          translate([0,-0.4,0]) 
-            rcube(camera_x-2,camera_y+6,insert_wh+8+tol,camera_rr+insert_wr,case_sm,0);
+          translate([0,0.6,0]) 
+            rcube(camera_x-2,camera_y+4,insert_wh+8+tol,camera_rr+insert_wr,case_sm,0);
         }
       }
       // cable clearances
@@ -531,15 +541,27 @@ module insert() {
         }
       rotate(90) rotate([0,90,0])
         hull() {
-          translate([-4,-10,-case_x]) 
-            cylinder(r=5,h=2*case_x,$fn=case_sm);
-          translate([-4,10,-case_x]) 
-            cylinder(r=5,h=2*case_x,$fn=case_sm);
-          translate([5,-10,-case_x]) 
-            cylinder(r=5,h=2*case_x,$fn=case_sm);
-          translate([5,10,-case_x]) 
-            cylinder(r=5,h=2*case_x,$fn=case_sm);
+          translate([-4,-10,0*case_x]) 
+            cylinder(r=5,h=case_x,$fn=case_sm);
+          translate([-4,10,0*case_x]) 
+            cylinder(r=5,h=case_x,$fn=case_sm);
+          translate([5,-10,0*case_x]) 
+            cylinder(r=5,h=case_x,$fn=case_sm);
+          translate([5,10,0*case_x]) 
+            cylinder(r=5,h=case_x,$fn=case_sm);
         }
+      // DC power jack mounting hole
+      translate([case_x/2-power_ix,0,case_p-standoff_h+sleeve_u+tol+power_iy]) {
+        rotate([90,0,0]) 
+          cylinder(r=power_r,h=100,$fn=power_sm);
+        translate([-0.8*2*power_r/2,-100,-2*power_r]) 
+          cube([0.8*2*power_r,100,2*power_r]);
+      }
+      // power daisy chain
+      translate([case_x/2-power_ox,0,0]) {
+        translate([-power_w/2,-100,-2*power_h]) 
+          cube([power_w,100,2*power_h]);
+      }
       // holes for case mounting bolts
       translate([-case_x/2+bolt_ox,-case_y/2+bolt_oy,-5])
         cylinder(r=case_sbr,h=sleeve_z+10,$fn=sleeve_sm);
@@ -585,13 +607,13 @@ module insert() {
       }
       // MCU clearance
       hull() {
-        translate([-case_x/2+bolt_ox,case_y/2-bolt_oy+0.5,-5])
+        translate([-case_x/2+bolt_ox,case_y/2-bolt_oy+0.1,-5])
           cylinder(r=case_sbr,h=9,$fn=sleeve_sm);
-        translate([-case_x/2+bolt_ox,case_y/2-bolt_oy+0.5,-5+9])
+        translate([-case_x/2+bolt_ox,case_y/2-bolt_oy+0.1,-5+9])
           sphere(r=case_sbr,$fn=sleeve_sm);
-        translate([bolt_x-case_x/2+bolt_ox,case_y/2-bolt_oy+0.5,-5])
+        translate([bolt_x-case_x/2+bolt_ox,case_y/2-bolt_oy+0.1,-5])
           cylinder(r=case_sbr,h=9,$fn=sleeve_sm);
-        translate([bolt_x-case_x/2+bolt_ox,case_y/2-bolt_oy+0.5,-5+9])
+        translate([bolt_x-case_x/2+bolt_ox,case_y/2-bolt_oy+0.1,-5+9])
           sphere(r=case_sbr,$fn=sleeve_sm);
         translate([-case_x/2+bolt_ox,case_y/2-bolt_oy-3,-5])
           cylinder(r=case_sbr,h=10,$fn=sleeve_sm);
@@ -643,18 +665,18 @@ module mount() {
 }
 
 module assembly() {
-  translate([0,0,-tol]) case();
-  core();
+  //translate([0,0,-tol]) case();
+  //core();
   translate([0,0,-2*tol]) standoffs();
   //translate([0,0,-tol]) insert();
   translate([0,0,-tol]) frame();
-  translate([0,0,-2*tol]) mount();
-  translate([0,0,case_z+sleeve_z-sleeve_u-ring_h]) ring();
-  translate([0,insert_y/2-stick_y,case_z+sleeve_z-sleeve_u-stick_z-tol]) stick();
-  translate([0,-insert_y/2,case_z+sleeve_z-sleeve_u-stick_z-tol]) stick();
-  translate([insert_x/2,0,case_z+sleeve_z-sleeve_u-stick_z-tol]) rotate(90) stick();
-  translate([-insert_x/2+stick_y,0,case_z+sleeve_z-sleeve_u-stick_z-tol]) rotate(90) stick();
-  sleeve();
+  //translate([0,0,-2*tol]) mount();
+  //translate([0,0,case_z+sleeve_z-sleeve_u-ring_h]) ring();
+  //translate([0,insert_y/2-stick_y,case_z+sleeve_z-sleeve_u-stick_z-tol]) stick();
+  //translate([0,-insert_y/2,case_z+sleeve_z-sleeve_u-stick_z-tol]) stick();
+  //translate([insert_x/2,0,case_z+sleeve_z-sleeve_u-stick_z-tol]) rotate(90) stick();
+  //translate([-insert_x/2+stick_y,0,case_z+sleeve_z-sleeve_u-stick_z-tol]) rotate(90) stick();
+  //sleeve();
 }
 
 module cutaway() {
@@ -667,8 +689,8 @@ module cutaway() {
   }
 }
 
-//assembly();
-cutaway();
+assembly();
+//cutaway();
 //knife();
 
 // 3d printing
