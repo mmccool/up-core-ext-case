@@ -89,7 +89,7 @@ power_r = 8/2;
 power_R = 10/2;
 power_nr = 11.5/2;
 power_ox = 22;
-power_iy = 1;
+power_iy = 2;
 power_ix = case_x/2;
 power_w = 4;
 power_h = 2;
@@ -216,11 +216,11 @@ module insert() {
         translate([0,0,case_p-standoff_h+sleeve_u+tol]) 
           rcube(case_x-6*case_r,case_y-2*case_r+2*lock_h,
                 sleeve_u,case_r-case_t-sleeve_tol,case_sm);
-        translate([0,0,case_p-standoff_h+2*sleeve_u-1]) 
+        translate([0,0,case_p-standoff_h+1.5*sleeve_u-1]) 
           rotate([180,0,0])
-            rcube(case_x-2*case_r+2*(case_r-case_t-sleeve_tol)-1-18,
+            rcube(case_x-3*case_r+2*(case_r-case_t-sleeve_tol)-1-18,
                   case_y-2*case_r+2*(case_r-case_t-sleeve_tol)-1,
-                  2*sleeve_u,0.5,case_sm);
+                  1.3*sleeve_u,0.5,case_sm);
       }
       // cutout for ring
       translate([0,0,sleeve_z-sleeve_u-ring_h-standoff_h+case_p]) 
@@ -240,12 +240,21 @@ module insert() {
         translate([0,insert_y/2+tol,-standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol]) 
           stick(x_tol=10,y_tol=tol,z_tol=stick_y);
       }
-      hull() {
-        translate([0,-insert_y/2,-standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol]) 
-          stick(x_tol=10,y_tol=tol,z_tol=tol);
-        translate([0,-insert_y/2-stick_y-tol,
-                   -standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol]) 
-          stick(x_tol=10,y_tol=tol,z_tol=stick_y);
+      difference() {
+        hull() {
+          translate([0,-insert_y/2,-standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol]) 
+            stick(x_tol=10,y_tol=tol,z_tol=tol);
+          translate([0,-insert_y/2-stick_y-tol,
+                     -standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol]) 
+            stick(x_tol=10,y_tol=tol,z_tol=stick_y);
+        }
+        translate([case_x/2-power_ix,
+                     -case_y/2+case_r-(case_r-case_t-sleeve_tol+0),
+                     case_p-standoff_h+sleeve_u+tol+power_iy]) {
+          rotate([-90,0,0]) 
+            cylinder(r1=0.95*power_R,r2=power_R+0.5,h=5,$fn=power_sm);
+    
+        }
       }
       hull() {
         translate([insert_x/2,0,-standoff_h+case_p+sleeve_z-sleeve_u-stick_z-tol]) 
@@ -523,7 +532,7 @@ module insert() {
       translate([0,0,-5]) {
         hull() {
           rcube(camera_x,camera_y,sleeve_z-sleeve_u-camera_ch+5+tol,camera_rr,case_sm,0);
-          translate([0,0.6,0]) 
+          translate([0,0.9,0]) 
             rcube(camera_x-2,camera_y+4,insert_wh+8+tol,camera_rr+insert_wr,case_sm,0);
         }
       }
@@ -554,13 +563,21 @@ module insert() {
       translate([case_x/2-power_ix,0,case_p-standoff_h+sleeve_u+tol+power_iy]) {
         rotate([90,0,0]) 
           cylinder(r=power_r,h=100,$fn=power_sm);
-        translate([-0.8*2*power_r/2,-100,-2*power_r]) 
-          cube([0.8*2*power_r,100,2*power_r]);
+        translate([-0.75*2*power_r/2,-100,-2*power_r]) 
+          cube([0.75*2*power_r,100,2*power_r]);
+      }
+      translate([case_x/2-power_ix,
+                 -case_y/2+case_r-(case_r-case_t-sleeve_tol),
+                 case_p-standoff_h+sleeve_u+tol+power_iy]) {
+        rotate([90,0,0]) 
+          cylinder(r=power_R,h=100,$fn=power_sm);
+        translate([0,3.5,0]) rotate([-90,0,0]) 
+          cylinder(r=power_nr,h=100,$fn=power_sm);
       }
       // power daisy chain
-      translate([case_x/2-power_ox,0,0]) {
-        translate([-power_w/2,-100,-2*power_h]) 
-          cube([power_w,100,2*power_h]);
+      translate([case_x/2-power_ox,0,case_p-standoff_h+tol+power_h]) {
+        translate([-power_w/2,-100,-10]) 
+          cube([power_w,100,10]);
       }
       // holes for case mounting bolts
       translate([-case_x/2+bolt_ox,-case_y/2+bolt_oy,-5])
@@ -642,6 +659,18 @@ module sleeve() {
             sleeve_u+1,case_r-case_t-sleeve_tol,case_sm);
     // hole for camera lens
     cylinder(r=camera_r + camera_tol,h=case_z+sleeve_z+5,$fn=camera_sm);
+    // hole for power jack
+    translate([case_x/2-power_ix,2,case_z+sleeve_u+tol+power_iy]) {
+      rotate([90,0,0]) 
+        cylinder(r=power_R,h=100,$fn=power_sm);
+      translate([-power_R,-100,-2*power_R]) 
+        cube([2*power_R,100,2*power_R]);
+    }
+    // power daisy chain
+    translate([case_x/2-power_ox,0,case_z+tol+power_h]) {
+      translate([-power_w/2,-100,-10]) 
+        cube([power_w,100,10]);
+    }
   }
 }
 
@@ -665,18 +694,17 @@ module mount() {
 }
 
 module assembly() {
-  //translate([0,0,-tol]) case();
-  //core();
+  translate([0,0,-tol]) case();
+  core();
   translate([0,0,-2*tol]) standoffs();
-  //translate([0,0,-tol]) insert();
   translate([0,0,-tol]) frame();
-  //translate([0,0,-2*tol]) mount();
-  //translate([0,0,case_z+sleeve_z-sleeve_u-ring_h]) ring();
-  //translate([0,insert_y/2-stick_y,case_z+sleeve_z-sleeve_u-stick_z-tol]) stick();
-  //translate([0,-insert_y/2,case_z+sleeve_z-sleeve_u-stick_z-tol]) stick();
-  //translate([insert_x/2,0,case_z+sleeve_z-sleeve_u-stick_z-tol]) rotate(90) stick();
-  //translate([-insert_x/2+stick_y,0,case_z+sleeve_z-sleeve_u-stick_z-tol]) rotate(90) stick();
-  //sleeve();
+  translate([0,0,-2*tol]) mount();
+  translate([0,0,case_z+sleeve_z-sleeve_u-ring_h]) ring();
+  translate([0,insert_y/2-stick_y,case_z+sleeve_z-sleeve_u-stick_z-tol]) stick();
+  translate([0,-insert_y/2,case_z+sleeve_z-sleeve_u-stick_z-tol]) stick();
+  translate([insert_x/2,0,case_z+sleeve_z-sleeve_u-stick_z-tol]) rotate(90) stick();
+  translate([-insert_x/2+stick_y,0,case_z+sleeve_z-sleeve_u-stick_z-tol]) rotate(90) stick();
+  sleeve();
 }
 
 module cutaway() {
