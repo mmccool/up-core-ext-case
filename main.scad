@@ -53,7 +53,7 @@ camera_sx = 20;
 camera_sy = 20;
 camera_sr = 5/2;
 camera_h = 12.5;
-camera_r = 14/2;
+camera_r = 16/2;
 camera_ie = 1;
 camera_ir = m2_hole_radius + 0.2;
 camera_inr = m2_nut_radius + 0.4;
@@ -717,14 +717,14 @@ module cutaway() {
   }
 }
 
-assembly();
+//assembly();
 //cutaway();
 //knife();
 
 // 3d printing
 //frame();
 //mount();
-//sleeve();
+sleeve();
     // lock slot
 /*
     translate([0,0,case_z+sleeve_u+tol]) 
